@@ -1,0 +1,9 @@
+{application,jenkins_listener,
+             [{description,[]},
+              {vsn,"0.1"},
+              {registered,[]},
+              {applications,[kernel,stdlib]},
+              {mod,{jenkins_listener_app,[]}},
+              {env,[]},
+              {modules,[jenkins_listener_app,jenkins_listener_sup,
+                        jenkins_websocket_client]}]}.

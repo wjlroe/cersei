@@ -5,5 +5,5 @@
               {applications,[kernel,stdlib]},
               {mod,{jenkins_listener_app,[]}},
               {env,[]},
-              {modules,[jenkins_listener_app,jenkins_listener_sup,
-                        jenkins_websocket_client]}]}.
+              {modules,[jenkins_build_info,jenkins_listener_app,
+                        jenkins_listener_sup,jenkins_websocket_client]}]}.

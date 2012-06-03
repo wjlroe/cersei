@@ -1,6 +1,6 @@
 -module(jenkins_websocket_client).
 -behaviour(websocket_client).
--export([start/0]).
+-export([start/1]).
 %% websocket specific callbacks
 -export([ws_onmessage/1,ws_onopen/0,ws_onclose/0,ws_close/0,ws_send/1]).
 
@@ -9,7 +9,7 @@ ws_send(Data) ->
 
 start(Endpoint) ->
     case http_uri:parse(Endpoint) of
-        {ok, {Scheme, UserInfo, Host, Port, Path, Query}} ->
+        {ok, {_Scheme, _UserInfo, Host, Port, Path, _Query}} ->
             websocket_client:start(Host,Port,Path,?MODULE);
         {error, Reason} ->
             io:format("Error parsing endpoint: ~s: ~p~n", [Endpoint, Reason])
@@ -17,7 +17,8 @@ start(Endpoint) ->
 
 %% Handle incoming messages here
 ws_onmessage(Data) ->
-    io:format("Got some data:: ~p~n",[Data]).
+    io:format("Got some data:: ~p~n",[Data]),
+    jenkins_build_info:build_received(Data).
 
 ws_onclose() ->
     io:format("Connection closed~n").

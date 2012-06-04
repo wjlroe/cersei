@@ -2,8 +2,9 @@
              [{description,[]},
               {vsn,"0.1"},
               {registered,[]},
-              {applications,[kernel,stdlib]},
+              {applications,[kernel,stdlib,inets]},
               {mod,{jenkins_listener_app,[]}},
               {env,[]},
               {modules,[jenkins_build_info,jenkins_listener_app,
-                        jenkins_listener_sup,jenkins_websocket_client]}]}.
+                        jenkins_listener_sup,jenkins_websocket_client,
+                        meck_cassettes]}]}.

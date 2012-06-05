@@ -1,40 +1,60 @@
 -module(meck_cassettes).
 -behaviour(gen_server).
--export([use_cassette/2,mock_request/4]).
+-export([use_cassette/2]).
 -export([code_change/3,handle_call/3,handle_cast/2,handle_info/2,terminate/2,init/1]).
 
-use_cassette(_Name, _Fun) ->
-    meck:new(httpc, [unstick]),
-    %% If cassette doesn't exist:
-    %%  record request parameters and return from httpc
-    %%  save to cassette file
-    %%  return passthrough from httpc
-    %% otherwise cassette exists:
-    %%  read file, check parameters to file
-    %%  return the response from the file
-    %%  anything doesn't match? error
-    meck:expect(httpc, request).
+-ifdef(TEST).
+-include_lib("eunit/include/eunit.hrl").
+-endif.
 
-mock_request(Method, Request, HTTPOptions, Options) ->
-    Args = [Method, Request],
-    Fixture = "test/fixtures/cassettes/mock_request",
-    case file:read_file_info(Fixture) of
-        {error, _} ->
-            Response = httpc:request(Method, Request, HTTPOptions, Options),
-            RequestCall = [{request, Args},
-                           {response, Response}],
-            ok = file:write_file(Fixture, term_to_binary(RequestCall)),
-            Response;
-         _ ->
-            case file:read_file(Fixture) of
-                {ok, ResponseBinary} ->
-                    ResponseCall = binary_to_term(ResponseBinary),
-                    proplists:get_value(response, ResponseCall);
-                {error, Something} ->
-                    {error, Something}
-            end
-    end.
-            
+-ifdef(TEST).
+use_cassette_test() ->
+    application:start(inets),
+    Name = "fold.me_count",
+    FixtureName = "test/fixtures/cassettes/" ++ Name,
+    ?assertMatch({error, enoent}, file:read_file_info(FixtureName)),
+    Response = use_cassette(Name,
+                            fun() ->
+                                    httpc:request(get, {"http://foldme.herokuapp.com/count",[]},[],[])
+                            end),
+    application:stop(inets),
+    ?assertMatch({ok, _}, file:read_file_info(FixtureName)),
+    ?assertEqual(ok, file:delete(FixtureName)),
+    ?assertMatch({ok, {{_, 200, _}, _, "{\"fold_count\":51}"}}, Response).
+-endif.
+
+use_cassette(Name, Fun) ->
+    meck:new(httpc, [unstick]),
+    meck:expect(httpc, 
+                request, 
+                fun(Method, Request, HTTPOptions, Options) -> 
+                        Args = [Method, Request],
+                        Fixture = "test/fixtures/cassettes/" ++ Name,
+                        io:format("Fixture = ~p~n", [Fixture]),
+                        case file:read_file_info(Fixture) of
+                            {error, enoent} ->
+                                io:format("fixture doesn't exist~n",[]),
+                                Response = httpc_meck_original:request(Method, Request, HTTPOptions, Options),
+                                io:format("called passthrough, response: ~p~n", [Response]),
+                                RequestCall = [{request, Args},
+                                               {response, Response}],
+                                ok = file:write_file(Fixture, term_to_binary(RequestCall)),
+                                io:format("writing fixture file~n", []),
+                                Response;
+                            _ ->
+                                io:format("reading fixture file..~n", []),
+                                case file:read_file(Fixture) of
+                                    {ok, ResponseBinary} ->
+                                        ResponseCall = binary_to_term(ResponseBinary),
+                                        proplists:get_value(response, ResponseCall);
+                                    {error, Something} ->
+                                        {error, Something}
+                                end
+                        end
+                end),
+    Response = Fun(),
+    meck:unload(httpc),
+    Response.
 
 %% @hidden
 code_change(_OldVsn, S, _Extra) -> {ok, S}.

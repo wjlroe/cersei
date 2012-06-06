@@ -1,4 +1,5 @@
 -module(build_output_parser).
+-export([parse_build_output/1]).
 
 -ifdef(TEST).
 -include_lib("eunit/include/eunit.hrl").

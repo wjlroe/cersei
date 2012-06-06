@@ -11,7 +11,7 @@
 use_cassette_test() ->
     application:start(inets),
     Name = "fold.me_count",
-    FixtureName = "test/fixtures/cassettes/" ++ Name,
+    FixtureName = "../test/fixtures/cassettes/" ++ Name,
     ?assertMatch({error, enoent}, file:read_file_info(FixtureName)),
     Response = use_cassette(Name,
                             fun() ->
@@ -29,17 +29,17 @@ use_cassette(Name, Fun) ->
                 request, 
                 fun(Method, Request, HTTPOptions, Options) -> 
                         Args = [Method, Request],
-                        Fixture = "test/fixtures/cassettes/" ++ Name,
+                        %% within .eunit directory
+                        Fixture = "../test/fixtures/cassettes/" ++ Name,
                         io:format("Fixture = ~p~n", [Fixture]),
                         case file:read_file_info(Fixture) of
                             {error, enoent} ->
                                 io:format("fixture doesn't exist~n",[]),
                                 Response = httpc_meck_original:request(Method, Request, HTTPOptions, Options),
-                                io:format("called passthrough, response: ~p~n", [Response]),
                                 RequestCall = [{request, Args},
                                                {response, Response}],
+                                io:format("going to write file: ~p while in: ~p~n", [Fixture, file:get_cwd()]),
                                 ok = file:write_file(Fixture, term_to_binary(RequestCall)),
-                                io:format("writing fixture file~n", []),
                                 Response;
                             _ ->
                                 io:format("reading fixture file..~n", []),

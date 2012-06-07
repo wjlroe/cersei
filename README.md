@@ -1,5 +1,7 @@
 # Cersei
 
+[![Build Status](https://secure.travis-ci.org/wjlroe/cersei.png?branch=master)](http://travis-ci.org/wjlroe/cersei)
+
 I listen to Jenkins and I tell people what I hear. Or something.
 
 ## Design

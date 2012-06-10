@@ -12,9 +12,34 @@ build_received(Json) ->
         {struct, JsonData} ->
             {struct, BuildNumber} = proplists:get_value(<<"number">>,  JsonData),
             {struct, Project}     = proplists:get_value(<<"project">>, JsonData),
-            {struct, _Result}     = proplists:get_value(<<"result">>,  JsonData),
+            {struct, Result}      = proplists:get_value(<<"result">>,  JsonData),
             {ok, Url} = console_url(Project, BuildNumber),
-            fetch_job_details(Url);
+            case fetch_job_details(Url) of
+                {ok, ConsoleText} ->
+                    case build_output_parser:parse_build_output(ConsoleText) of
+                        {error, Error} ->
+                            io:format("Error parsing build output: ~p~n", [Error]);
+                        BuildOutcome ->
+                            case build_filter:groups_for_project(Project) of
+                                {ok, Groups} ->
+                                    lists:foreach(
+                                      fun(Group) ->
+                                              group_stats:update_stats(Group, 
+                                                                       Project, 
+                                                                       BuildNumber, 
+                                                                       Result, 
+                                                                       BuildOutcome)
+                                      end,
+                                      Groups);
+                                {error, Error} ->
+                                    io:format("Error getting groups for Project: ~p. Error: ~p~n", 
+                                              [Project, Error])
+                            end
+                    end;
+                {error, Error} ->
+                    io:format("Error fetching job details for Url: ~p Error: ~p~n", 
+                              [Url, Error])
+            end;
         Error ->
             {error, Error}
     end.
@@ -30,10 +55,11 @@ auth_header(User, Pass) ->
 fetch_job_exists_test() ->
     application:start(inets),
     %% The fixture for this call should be checked into SCM
-    Response = meck_cassettes:use_cassette("on_topic_job_4",
-                                           fun() ->
-                                                   fetch_job_details("http://localhost:8080/job/on_topic/4/consoleText")
-                                           end),
+    Response = meck_cassettes:use_cassette(
+                 "on_topic_job_4",
+                 fun() ->
+                         fetch_job_details("http://localhost:8080/job/on_topic/4/consoleText")
+                 end),
     application:stop(inets),
     ?assertMatch({ok, _}, Response),
     {ok, Body} = Response,

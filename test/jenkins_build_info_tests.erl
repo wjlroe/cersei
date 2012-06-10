@@ -21,8 +21,8 @@ fetch_job_exists(_) ->
     {ok, Body} = Response,
     BinaryBody = list_to_binary(Body),
     Matches = binary:matches(BinaryBody, <<"28 tests">>),
-    % ?_assert(is_list(Matches)),
-    ?_assertEqual(1, length(Matches)).
+    [?_assert(is_list(Matches)),
+     ?_assertEqual(1, length(Matches))].
 
 bad_url_fetch_job(_) ->
     ?_assertEqual({error, no_scheme}, jenkins_build_info:fetch_job_details("sdhfkshdfkhsfd")).

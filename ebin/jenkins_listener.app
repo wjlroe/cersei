@@ -5,7 +5,7 @@
               {applications,[kernel,stdlib,inets]},
               {mod,{jenkins_listener_app,[]}},
               {env,[]},
-              {modules,[build_filter,build_output_parser,group_stats,
-                        jenkins_build_info,jenkins_listener_app,
+              {modules,[build_filter,build_output_parser,ets_persistence,
+                        group_stats,jenkins_build_info,jenkins_listener_app,
                         jenkins_listener_sup,jenkins_websocket_client,
-                        meck_cassettes]}]}.
+                        meck_cassettes,models,redis_persistence]}]}.

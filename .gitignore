@@ -6,3 +6,4 @@ deps/*
 dev/*
 doc/*
 rel/cersei
+.erlang.path

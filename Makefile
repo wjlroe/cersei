@@ -1,4 +1,8 @@
 REBAR = $(shell pwd)/rebar
+erlang_path := $(wildcard .erlang.path)
+ifneq ($(strip $(erlang_path)),)
+	PATH := $(shell cat .erlang.path):${PATH}
+endif
 
 .PHONY: deps rel stagedevrel test
 

@@ -1,4 +1,4 @@
--module(build_group_websocket_server).
+-module(build_group_websocket_handler).
 -behaviour(cowboy_http_websocket_handler).
 -export([init/3]).
 -export([websocket_init/3, websocket_handle/3,

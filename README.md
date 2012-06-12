@@ -8,7 +8,7 @@ I listen to Jenkins and I tell people what I hear. Or something.
 
 - JSON string received from websocket
   (`jenkins_websocket_client:ws_onmessage/1`)
-- `jenkins_build_info` parses the JSON and fetches full details from jenkins	
+- `jenkins_build_info` parses the JSON and fetches full details from jenkins
 - `build_output_parser` parses the console output to calculate status
   ({pass/fail, errors: 4, failures: 2, tests: 42, duration: 35.6s})
   - "42 steps (1 failed, 41 passed)" - add 1 to failures, add 42 to
@@ -24,6 +24,5 @@ I listen to Jenkins and I tell people what I hear. Or something.
 - `group_stats` contains state on every group's stats at present
   - last test run results
   - on change -> update all subscribers
-- `build_group_websocket_server` sends messages to all subscribed
+- `build_group_websocket_handler` sends messages to all subscribed
   clients on a change in a group's stats
-  

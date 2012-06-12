@@ -20,7 +20,7 @@ start() ->
 start(_StartType, _StartArgs) ->
     application:start(inets),
     Dispatch = [{'_', [
-                       {[<<"websocket">>], build_group_websocket_server, []},
+                       {[<<"websocket">>], build_group_websocket_handler, []},
                        {'_', build_group_http_handler, []}
                       ]}],
     cowboy:start_listener(builds_websocket, 100,

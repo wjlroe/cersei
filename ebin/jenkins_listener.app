@@ -6,7 +6,7 @@
               {mod,{jenkins_listener_app,[]}},
               {env,[]},
               {modules,[build_filter,build_group_http_handler,
-                        build_group_websocket_server,build_output_parser,
+                        build_group_websocket_handler,build_output_parser,
                         ets_persistence,group_stats,jenkins_build_info,
                         jenkins_listener_app,jenkins_listener_sup,
                         jenkins_websocket_client,meck_cassettes,models,

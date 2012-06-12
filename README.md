@@ -20,6 +20,7 @@ I listen to Jenkins and I tell people what I hear. Or something.
     [foobar-backend, foobar-frontend, foobar-ios])
   - groups can be ad-hoc defined in the client
   - client can subscribe to any group (but only one)
+  - project is implicitly a group
 - `group_stats` contains state on every group's stats at present
   - last test run results
   - on change -> update all subscribers

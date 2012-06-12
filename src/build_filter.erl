@@ -3,5 +3,5 @@
 
 %% Needs to map project -> group in a many<->many relationship
 
-groups_for_project(_Project) ->
-    {ok, []}.
+groups_for_project(Project) ->
+    [Project].

@@ -7,7 +7,8 @@
   {applications, [
                   kernel,
                   stdlib,
-                  inets
+                  inets,
+                  cowboy
                  ]},
   {mod, { jenkins_listener_app, []}},
   {env, []}

@@ -1,0 +1,36 @@
+<!DOCTYPE HTML>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,
+                                   initial-scale=1.0">
+    <title>Cersei</title>
+    <link rel="stylesheet" href="/css/amelia.bootstrap.min.css">
+    <link rel="stylesheet" href="/css/cersei.css">
+    <script type="text/javascript" src="/js/websocket.js"></script>
+  </head>
+  <body>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container">
+          <a class="btn btn-navbar" data-toggle="collapse"
+             data-target=".nav-collapse">
+          </a>
+          <a class="brand" href="/index.html">Cersei</a>
+          <div class="nav-collapse">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="sse">
+      <a href="javascript:open()">Open websocket connection</a><br/>
+      <a href="javascript:send()">Send Message</a>
+    </div>
+
+    <div class="container">
+      <div id="msgs">
+      </div>
+    </div>
+  </body>
+</html>

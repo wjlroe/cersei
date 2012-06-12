@@ -38,7 +38,7 @@ docs:
 	$(REBAR) skip_deps=true doc
 
 console:
-	exec erl -pa $(PWD)/ebin -pa $(PWD)/deps/*/ebin -boot start_sasl -s reloader
+	exec erl -pa $(PWD)/ebin -pa $(PWD)/deps/*/ebin -boot start_sasl -s reloader -s jenkins_listener_app
 
 ##
 ## Developer targets

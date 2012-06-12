@@ -8,7 +8,8 @@
                   kernel,
                   stdlib,
                   inets,
-                  cowboy
+                  cowboy,
+                  gproc
                  ]},
   {mod, { jenkins_listener_app, []}},
   {env, []}

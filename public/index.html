@@ -17,7 +17,7 @@ function open()
         return;
     }
     /* @todo: Change to your own server IP address */
-    ws = new WebSocket("ws://localhost:10100");
+    ws = new WebSocket("ws://localhost:10100/websocket");
     ws.onopen = function() {
         console.log('Connected');
     };

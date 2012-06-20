@@ -20,7 +20,7 @@ use_cassette_test() ->
     application:stop(inets),
     ?assertMatch({ok, _}, file:read_file_info(FixtureName)),
     ?assertEqual(ok, file:delete(FixtureName)),
-    ?assertMatch({ok, {{_, 200, _}, _, "{\"fold_count\":51}"}}, Response).
+    ?assertMatch({ok, {{_, 200, _}, _, "{\"fold_count\""++_}}, Response).
 -endif.
 
 use_cassette(Name, Fun) ->

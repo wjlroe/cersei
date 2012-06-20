@@ -8,7 +8,7 @@ start_tests() ->
     application:start(inets).
 
 stop_tests(_) ->
-    application:stop(inets). 
+    application:stop(inets).
 
 fetch_job_exists(_) ->
     %% The fixture for this call should be checked into SCM
@@ -35,11 +35,11 @@ fetch_job_details_test_() ->
 
 
 console_url_no_env_test() ->
-    ?assertEqual({error, {config_missing, jenkins_url}}, 
+    ?assertEqual({error, {config_missing, jenkins_url}},
                  jenkins_build_info:console_url("woot", "1")).
 console_url_bad_url_test() ->
     application:set_env(jenkins_listener, jenkins_url, "ci.somebody.com"),
-    ?assertEqual({error, no_scheme}, 
+    ?assertEqual({error, no_scheme},
                  jenkins_build_info:console_url("woot", "1")).
 console_url_correct_format_test() ->
     application:set_env(jenkins_listener, jenkins_url, "https://ci.somebody.com"),

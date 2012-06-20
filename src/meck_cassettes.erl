@@ -25,9 +25,9 @@ use_cassette_test() ->
 
 use_cassette(Name, Fun) ->
     meck:new(httpc, [unstick]),
-    meck:expect(httpc, 
-                request, 
-                fun(Method, Request, HTTPOptions, Options) -> 
+    meck:expect(httpc,
+                request,
+                fun(Method, Request, HTTPOptions, Options) ->
                         Args = [Method, Request],
                         %% within .eunit directory
                         Fixture = "../test/fixtures/cassettes/" ++ Name,

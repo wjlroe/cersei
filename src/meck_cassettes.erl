@@ -3,26 +3,6 @@
 -export([use_cassette/2]).
 -export([code_change/3,handle_call/3,handle_cast/2,handle_info/2,terminate/2,init/1]).
 
--ifdef(TEST).
--include_lib("eunit/include/eunit.hrl").
--endif.
-
--ifdef(TEST).
-use_cassette_test() ->
-    application:start(inets),
-    Name = "fold.me_count",
-    FixtureName = "../test/fixtures/cassettes/" ++ Name,
-    ?assertMatch({error, enoent}, file:read_file_info(FixtureName)),
-    Response = use_cassette(Name,
-                            fun() ->
-                                    httpc:request(get, {"http://foldme.herokuapp.com/count",[]},[],[])
-                            end),
-    application:stop(inets),
-    ?assertMatch({ok, _}, file:read_file_info(FixtureName)),
-    ?assertEqual(ok, file:delete(FixtureName)),
-    ?assertMatch({ok, {{_, 200, _}, _, "{\"fold_count\""++_}}, Response).
--endif.
-
 use_cassette(Name, Fun) ->
     meck:new(httpc, [unstick]),
     meck:expect(httpc,

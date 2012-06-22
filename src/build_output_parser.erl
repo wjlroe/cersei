@@ -2,7 +2,7 @@
 -export([parse_build_output/1]).
 
 -ifdef(TEST).
--include_lib("eunit/include/eunit.hrl").
+-compile(export_all).
 -endif.
 
 -define(REGEXES, 
@@ -14,29 +14,6 @@
         ]).
 
 % ============================== parse_build_output ============================
-
--ifdef(TEST).
-parse_simple_rspec_fail_test() ->
-    ?assertEqual(
-       {fail, {bugs, 32}, {tests, 59}}, 
-       parse_build_output("59 examples, 32 failures, 3 pending")).
-parse_simple_rspec_pass_test() ->
-    ?assertEqual(
-       {pass, {bugs, 0}, {tests, 7}},
-       parse_build_output("7 tests, 10 assertions, 0 failures, 0 errors, 0 skips")).
-parse_general_crap_test() ->
-    ?assertEqual(
-        {error, no_regex_matched},
-        parse_build_output("general crap")).
-parse_clojure_midje_passing_test() ->
-    ?assertEqual(
-       {pass, {bugs, 0}, {tests, 11}},
-       parse_build_output("All claimed facts (11) have been confirmed.")).
-parse_clojure_midje_failing_test() ->
-    ?assertEqual(
-       {fail, {bugs, 3}, {tests, 28}},
-       parse_build_output("FAILURE: 3 facts were not confirmed. (But 25 were.)")).
--endif.
 
 parse_build_output(Output) ->
     case lists:sort(group_counts(Output)) of
@@ -60,21 +37,6 @@ test_summary(Tests, BugCount) ->
 
 % ============================= group_counts ===================================
 
--ifdef(TEST).
-group_count_simple_test() ->
-    ?assertEqual(
-       [{bugs, 32}, {tests, 59}],
-       lists:sort(group_counts("59 examples, 32 failures, 3 pending"))).
-group_counts_clojure_passing_test() ->
-    ?assertEqual(
-       [{tests, 11}],
-       lists:sort(group_counts("All claimed facts (11) have been confirmed."))).
-no_matches_group_count_test() ->
-    ?assertEqual(
-        [],
-        group_counts("herpa derpa la de da")).
--endif.
-
 group_counts(Output) ->
     RegexChecks = lists:zip(?REGEXES, 
                             lists:duplicate(length(?REGEXES), Output)),
@@ -83,32 +45,6 @@ group_counts(Output) ->
                 RegexChecks).
 
 % ============================= regex_match_to_integers ========================
-
--ifdef(TEST).
-regex_match_simple_bug_test() ->
-    ?assertEqual(
-       [{bugs, 3}, {tests, 10}],
-       lists:sort(
-         regex_match_to_integers(
-           {{"([0-9]+) tests and ([0-9]+) failures", [tests, bugs]},
-            "10 tests and 3 failures"}, 
-           []))).
-regex_match_add_to_existing_test() ->
-    ?assertEqual(
-       [{bugs, 4}, {tests, 8}],
-       lists:sort(
-         regex_match_to_integers(
-           {{"([0-9]+) tests and ([0-9]+) failures", [tests, bugs]}, 
-            "5 tests and 1 failures"}, 
-           [{tests, 3}, {bugs, 3}]))).
-regex_match_nothing_test() ->
-    ?assertEqual(
-        [],
-        regex_match_to_integers(
-            {{"([0-9]+) tests and ([0-9]+) failures", [tests, bugs]}, 
-            "blah blah nothing nothing"},
-            [])).
--endif.
 
 regex_match_to_integers({{Regex, Groups}, Output}, Acc) ->
     case re:run(Output, Regex, [{capture, all, list}]) of

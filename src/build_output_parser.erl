@@ -8,7 +8,9 @@
 -define(REGEXES, 
         [
          {"(?<EXAMPLES>[0-9]+) examples, (?<FAILURES>[0-9]+) failures", [tests, bugs]},
-         {"([0-9]+) tests,.+, ([0-9]) failures", [tests, bugs]}
+         {"([0-9]+) tests,.+, ([0-9]) failures", [tests, bugs]},
+         {"FAILURE: ([0-9]+) facts were not confirmed.+But ([0-9]+) were", [bugs, passes]},
+         {"All claimed facts \\(([0-9]+)\\) have been confirmed", [tests]}
         ]).
 
 % ============================== parse_build_output ============================
@@ -26,16 +28,34 @@ parse_general_crap_test() ->
     ?assertEqual(
         {error, no_regex_matched},
         parse_build_output("general crap")).
+parse_clojure_midje_passing_test() ->
+    ?assertEqual(
+       {pass, {bugs, 0}, {tests, 11}},
+       parse_build_output("All claimed facts (11) have been confirmed.")).
+parse_clojure_midje_failing_test() ->
+    ?assertEqual(
+       {fail, {bugs, 3}, {tests, 28}},
+       parse_build_output("FAILURE: 3 facts were not confirmed. (But 25 were.)")).
 -endif.
 
 parse_build_output(Output) ->
     case lists:sort(group_counts(Output)) of
-        [{bugs, BugCount}, {tests, TestCount}] when BugCount > 0 ->
-            {fail, {bugs, BugCount}, {tests, TestCount}};
-        [{bugs, BugCount}, {tests, TestCount}] ->
-            {pass, {bugs, BugCount}, {tests, TestCount}};
+        [{bugs, BugCount} | Tests] when BugCount > 0 ->
+            {fail, {bugs, BugCount}, test_summary(Tests, BugCount)};
+        [{bugs, BugCount} | Tests] ->
+            {pass, {bugs, BugCount}, test_summary(Tests, BugCount)};
+        [{tests, TestNum}] ->
+            {pass, {bugs, 0}, {tests, TestNum}};
         _Error -> 
             {error, no_regex_matched}
+    end.
+
+test_summary(Tests, BugCount) ->
+    case Tests of
+        [{tests, Num}] ->
+            {tests, Num};
+        [{passes, Num}] ->
+            {tests, Num + BugCount}
     end.
 
 % ============================= group_counts ===================================
@@ -45,6 +65,10 @@ group_count_simple_test() ->
     ?assertEqual(
        [{bugs, 32}, {tests, 59}],
        lists:sort(group_counts("59 examples, 32 failures, 3 pending"))).
+group_counts_clojure_passing_test() ->
+    ?assertEqual(
+       [{tests, 11}],
+       lists:sort(group_counts("All claimed facts (11) have been confirmed."))).
 no_matches_group_count_test() ->
     ?assertEqual(
         [],

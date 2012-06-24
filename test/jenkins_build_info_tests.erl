@@ -5,7 +5,9 @@
 -define(setup(F), {setup, fun start_tests/0, fun stop_tests/1, F}).
 
 start_tests() ->
-    application:start(inets).
+    application:start(inets),
+    application:set_env(jenkins_listener, jenkins_user, "woot"),
+    application:set_env(jenkins_listener, jenkins_pass, "pass").
 
 stop_tests(_) ->
     application:stop(inets).
@@ -36,13 +38,13 @@ fetch_job_details_test_() ->
 
 console_url_no_env_test() ->
     ?assertEqual({error, {config_missing, jenkins_url}},
-                 jenkins_build_info:console_url("woot", "1")).
+                 jenkins_build_info:console_url("woot", 1)).
 console_url_bad_url_test() ->
     application:set_env(jenkins_listener, jenkins_url, "ci.somebody.com"),
     ?assertEqual({error, no_scheme},
-                 jenkins_build_info:console_url("woot", "1")).
+                 jenkins_build_info:console_url("woot", 1)).
 console_url_correct_format_test() ->
     application:set_env(jenkins_listener, jenkins_url, "https://ci.somebody.com"),
-    {ok, Url} = jenkins_build_info:console_url("woot", "1"),
+    {ok, Url} = jenkins_build_info:console_url("woot", 1),
     ?assertMatch(<<"https://ci.somebody.com:443/job/woot/1/consoleText">>,
                  list_to_binary(Url)).

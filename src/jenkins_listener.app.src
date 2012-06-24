@@ -8,6 +8,9 @@
                   kernel,
                   stdlib,
                   inets,
+                  crypto,
+                  public_key,
+                  ssl,
                   cowboy,
                   gproc
                  ]},

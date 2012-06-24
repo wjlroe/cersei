@@ -3,4 +3,4 @@
 -compile(export_all).
 
 groups_include_project_name_test() ->
-    ?assertEqual(["ProjectName"], build_filter:groups_for_project("ProjectName")).
+    ?assertEqual({ok, ["ProjectName"]}, build_filter:groups_for_project("ProjectName")).

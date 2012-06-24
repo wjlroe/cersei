@@ -4,4 +4,4 @@
 %% Needs to map project -> group in a many<->many relationship
 
 groups_for_project(Project) ->
-    [Project].
+    {ok, [Project]}.

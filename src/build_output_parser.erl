@@ -5,6 +5,7 @@
 -compile(export_all).
 -endif.
 
+%% TODO: Configurable, dynamically settable
 -define(REGEXES, 
         [
          {"(?<EXAMPLES>[0-9]+) examples, (?<FAILURES>[0-9]+) failures", [tests, bugs]},

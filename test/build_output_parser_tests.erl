@@ -4,11 +4,11 @@
 
 parse_simple_rspec_fail_test() ->
     ?assertEqual(
-       {fail, {bugs, 32}, {tests, 59}}, 
+       {fail, [{bugs, 32}, {tests, 59}]}, 
        build_output_parser:parse_build_output("59 examples, 32 failures, 3 pending")).
 parse_simple_rspec_pass_test() ->
     ?assertEqual(
-       {pass, {bugs, 0}, {tests, 7}},
+       {pass, [{bugs, 0}, {tests, 7}]},
        build_output_parser:parse_build_output("7 tests, 10 assertions, 0 failures, 0 errors, 0 skips")).
 parse_general_crap_test() ->
     ?assertEqual(
@@ -16,11 +16,11 @@ parse_general_crap_test() ->
         build_output_parser:parse_build_output("general crap")).
 parse_clojure_midje_passing_test() ->
     ?assertEqual(
-       {pass, {bugs, 0}, {tests, 11}},
+       {pass, [{bugs, 0}, {tests, 11}]},
        build_output_parser:parse_build_output("All claimed facts (11) have been confirmed.")).
 parse_clojure_midje_failing_test() ->
     ?assertEqual(
-       {fail, {bugs, 3}, {tests, 28}},
+       {fail, [{bugs, 3}, {tests, 28}]},
        build_output_parser:parse_build_output("FAILURE: 3 facts were not confirmed. (But 25 were.)")).
 
 group_count_simple_test() ->

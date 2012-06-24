@@ -19,11 +19,11 @@
 parse_build_output(Output) ->
     case lists:sort(group_counts(Output)) of
         [{bugs, BugCount} | Tests] when BugCount > 0 ->
-            {fail, {bugs, BugCount}, test_summary(Tests, BugCount)};
+            {fail, [{bugs, BugCount}, test_summary(Tests, BugCount)]};
         [{bugs, BugCount} | Tests] ->
-            {pass, {bugs, BugCount}, test_summary(Tests, BugCount)};
+            {pass, [{bugs, BugCount}, test_summary(Tests, BugCount)]};
         [{tests, TestNum}] ->
-            {pass, {bugs, 0}, {tests, TestNum}};
+            {pass, [{bugs, 0}, {tests, TestNum}]};
         _Error -> 
             {error, no_regex_matched}
     end.

@@ -22,6 +22,14 @@ parse_clojure_midje_failing_test() ->
     ?assertEqual(
        {fail, [{bugs, 3}, {tests, 28}]},
        build_output_parser:parse_build_output("FAILURE: 3 facts were not confirmed. (But 25 were.)")).
+parse_eunit_passing_test() ->
+    ?assertEqual(
+       {pass, [{bugs, 0}, {tests, 18}]},
+       build_output_parser:parse_build_output("All 18 tests passed.")).
+parse_eunit_failed_test() ->
+    ?assertEqual(
+       {fail, [{bugs, 1}, {tests, 19}]},
+       build_output_parser:parse_build_output("Failed: 1.  Skipped: 0.  Passed: 18.")).
 
 group_count_simple_test() ->
     ?assertEqual(

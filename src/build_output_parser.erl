@@ -11,7 +11,9 @@
          {"(?<EXAMPLES>[0-9]+) examples, (?<FAILURES>[0-9]+) failures", [tests, bugs]},
          {"([0-9]+) tests,.+, ([0-9]) failures", [tests, bugs]},
          {"FAILURE: ([0-9]+) facts were not confirmed.+But ([0-9]+) were", [bugs, passes]},
-         {"All claimed facts \\(([0-9]+)\\) have been confirmed", [tests]}
+         {"All claimed facts \\(([0-9]+)\\) have been confirmed", [tests]},
+         {"All ([0-9]+) tests passed", [tests]},
+         {"Failed: ([0-9]+)\\. .+Passed: ([0-9]+)", [bugs, passes]}
         ]).
 
 % ============================== parse_build_output ============================

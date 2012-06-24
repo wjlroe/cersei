@@ -10,31 +10,17 @@
 build_received(Json) ->
     case mochijson2:decode(Json) of
         {struct, JsonData} ->
-            {struct, BuildNumber} = proplists:get_value(<<"number">>,  JsonData),
-            {struct, Project}     = proplists:get_value(<<"project">>, JsonData),
-            {struct, Result}      = proplists:get_value(<<"result">>,  JsonData),
-            {ok, Url} = console_url(Project, BuildNumber),
+            BuildNumber = proplists:get_value(<<"number">>,  JsonData),
+            Project     = binary_to_list(proplists:get_value(<<"project">>, JsonData)),
+            Result      = proplists:get_value(<<"result">>,  JsonData),
+            {ok, Url}   = console_url(Project, BuildNumber),
             case fetch_job_details(Url) of
                 {ok, ConsoleText} ->
                     case build_output_parser:parse_build_output(ConsoleText) of
                         {error, Error} ->
                             io:format("Error parsing build output: ~p~n", [Error]);
                         BuildOutcome ->
-                            case build_filter:groups_for_project(Project) of
-                                {ok, Groups} ->
-                                    lists:foreach(
-                                      fun(Group) ->
-                                              group_stats:update_stats(Group, 
-                                                                       Project, 
-                                                                       BuildNumber, 
-                                                                       Result, 
-                                                                       BuildOutcome)
-                                      end,
-                                      Groups);
-                                {error, Error} ->
-                                    io:format("Error getting groups for Project: ~p. Error: ~p~n", 
-                                              [Project, Error])
-                            end
+                            notify_groups(Project, BuildNumber, Result, BuildOutcome)
                     end;
                 {error, Error} ->
                     io:format("Error fetching job details for Url: ~p Error: ~p~n", 
@@ -42,6 +28,23 @@ build_received(Json) ->
             end;
         Error ->
             {error, Error}
+    end.
+
+notify_groups(Project, BuildNumber, Result, BuildOutcome) ->
+    case build_filter:groups_for_project(Project) of
+        {ok, Groups} ->
+            lists:foreach(
+              fun(Group) ->
+                      group_stats:update_stats(Group, 
+                                               Project, 
+                                               BuildNumber, 
+                                               Result, 
+                                               BuildOutcome)
+              end,
+              Groups);
+        {error, Error} ->
+            io:format("Error getting groups for Project: ~p. Error: ~p~n", 
+                      [Project, Error])
     end.
 
 auth_header(User, Pass) ->
@@ -53,12 +56,28 @@ auth_header(User, Pass) ->
 
 %% @doc Returns the consoleText of a jenkins build
 fetch_job_details(Url) ->
-    Headers = [auth_header("jenkins_user", "jenkins_pass")],
-    case httpc:request(get, {Url, Headers}, [], []) of
-        {ok, {{_, _StatusCode, _}, _Headers, Body}} ->
-            {ok, Body};
-        {error, Reason} ->
-            {error, Reason}
+    io:format("Url: ~p~n", [Url]),
+    case application:get_env(jenkins_listener, jenkins_user) of
+        {ok, Username} ->
+            case application:get_env(jenkins_listener, jenkins_pass) of
+                {ok, Password} ->
+                    Headers = [auth_header(Username, Password)],
+                    case httpc:request(get, {Url, Headers}, [], []) of
+                        {ok, {{_, StatusCode, _}, _Headers, Body}} ->
+                            case StatusCode of
+                                200 ->
+                                    {ok, Body};
+                                _ ->
+                                    {error, StatusCode}
+                            end;
+                        {error, Reason} ->
+                            {error, Reason}
+                    end;
+                undefined ->
+                    {error, {config_missing, jenkins_pass}}
+            end;
+        undefined ->
+            {error, {config_missing, jenkins_user}}
     end.
 
 % ================================== console_url ===================================
@@ -69,8 +88,8 @@ console_url(Project, BuildNumber) ->
         {ok, Url} ->
             case http_uri:parse(Url) of
                 {Scheme, _UserInfo, Host, Port, _Path, _Query} ->
-                    {ok, io_lib:format("~p://~s:~B/job/~s/~s/consoleText",
-                                       [Scheme, Host, Port, Project, BuildNumber])};
+                    {ok, lists:flatten(io_lib:format("~s://~s:~B/job/~s/~B/consoleText",
+                                                     [Scheme, Host, Port, Project, BuildNumber]))};
                 Error ->
                     Error
             end;

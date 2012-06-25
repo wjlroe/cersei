@@ -17,10 +17,11 @@ handle(Req, State) ->
     io:format("Filename: ~p~n", [Filename]),
     FileLocation = filename:join(["./public", Filename]),
     io:format("FileLocation: ~p~n", [FileLocation]),
+    ContentTypeHeader = content_type(Filename),
     {ok, Req2} = case filelib:is_regular(FileLocation) of
                      true ->
                          {ok, Body} = file:read_file(FileLocation),
-                         cowboy_http_req:reply(200, [], Body, Req);
+                         cowboy_http_req:reply(200, [ContentTypeHeader], Body, Req);
                      false ->
                          cowboy_http_req:reply(404, [], <<"No such file">>, Req)
                  end,
@@ -28,3 +29,18 @@ handle(Req, State) ->
 
 terminate(_Req, _State) ->
     ok.
+
+content_type(Filename) ->
+    ContentType = mime_type(Filename),
+    {'Content-Type', ContentType}.
+
+mime_type(FileName) ->
+    "." ++ Extension = filename:extension(FileName),
+    MimeTypes = mime_types(),
+    proplists:get_value(Extension, MimeTypes).
+
+mime_types() ->
+    MimeTypesFile = filename:join(code:lib_dir(inets), 
+                                  "examples/server_root/conf/mime.types"),
+    {ok, MimeTypes} = httpd_conf:load_mime_types(MimeTypesFile),
+    MimeTypes.

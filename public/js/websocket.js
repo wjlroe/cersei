@@ -29,3 +29,7 @@ function open()
     console.log('Connection closed');
   };
 }
+
+window.onload = function() {
+  open();
+};

@@ -1,3 +1,8 @@
+var BuildGroup = function(name, projects) {
+  this.name = name;
+  this.projects = ko.observableArray(projects);
+};
+
 var ws = new Object;
 
 function send()

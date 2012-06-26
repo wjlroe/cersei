@@ -18,7 +18,7 @@ handle(Req, State) ->
     io:format("Filename: ~p~n", [RewrittenFilename]),
     FileLocation = filename:join(["./public", RewrittenFilename]),
     io:format("FileLocation: ~p~n", [FileLocation]),
-    ContentTypeHeader = content_type(Filename),
+    ContentTypeHeader = content_type(RewrittenFilename),
     {ok, Req2} = case filelib:is_regular(FileLocation) of
                      true ->
                          {ok, Body} = file:read_file(FileLocation),
@@ -49,7 +49,7 @@ mime_type(FileName) ->
     proplists:get_value(Extension, MimeTypes).
 
 mime_types() ->
-    MimeTypesFile = filename:join(code:lib_dir(inets), 
+    MimeTypesFile = filename:join(code:lib_dir(inets),
                                   "examples/server_root/conf/mime.types"),
     {ok, MimeTypes} = httpd_conf:load_mime_types(MimeTypesFile),
     MimeTypes.

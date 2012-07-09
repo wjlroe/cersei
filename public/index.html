@@ -4,35 +4,48 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,
                                    initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
     <title>Cersei</title>
+
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="/css/bootstrap-responsive.css">
     <link rel="stylesheet" href="/css/amelia.bootstrap.min.css">
     <link rel="stylesheet" href="/css/cersei.css">
+    <link rel="stylesheet" href="/css/GGS.css">
+
+    <script type="text/javascript" src="/js/GGS.js"></script>
     <script type="text/javascript" src="/js/knockout-2.1.0.js"></script>
     <script type="text/javascript" src="/js/websocket.js"></script>
+    <!--
+			This script enables structural HTML5 elements in old IE.
+			http://code.google.com/p/html5shim/
+		-->
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
   </head>
-  <body>
-    <div class="container">
+  <body lang="en">
 
-      <header class="jumbotron masthead">
-        <div class="inner">
-          <div class="alert alert-block alert-warning">
-            <h1 class="alert-heading">Lost connection to the server!!!</h1>
-          </div>
-        </div>
-      </header>
-
-      <section id="builds">
+    <article id="twoway" class="builds">
+      <section id="build1" class="wrapper">
         <div class="alert alert-success">
-          <strong>Success</strong>
-          Build succeeded. 18 tests ran.
+          <h2>altmetric</h2>
+          <h4 class="gigantic">18</h4>
         </div>
       </section>
+      <section id="build2" class="wrapper">
+        <div class="alert alert-failure">
+          <h2>octobutler</h2>
+          <h4 class="gigantic">12</h4>
+        </div>
+      </section>
+      <section id="build3" class="wrapper">
+        <div class="alert alert-failure">
+          <h2>tinker</h2>
+          <h4 class="gigantic">10</h4>
+        </div>
+      </section>
+    </article>
 
-      <div id="msgs">
-      </div>
-
-    </div>
   </body>
 </html>

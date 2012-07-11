@@ -11,9 +11,7 @@
     <link rel="stylesheet" href="/css/bootstrap-responsive.css">
     <link rel="stylesheet" href="/css/amelia.bootstrap.min.css">
     <link rel="stylesheet" href="/css/cersei.css">
-    <link rel="stylesheet" href="/css/GGS.css">
 
-    <script type="text/javascript" src="/js/GGS.js"></script>
     <script type="text/javascript" src="/js/knockout-2.1.0.js"></script>
     <script type="text/javascript" src="/js/websocket.js"></script>
     <!--
@@ -25,27 +23,25 @@
 		<![endif]-->
   </head>
   <body lang="en">
-
-    <article id="twoway" class="builds">
-      <section id="build1" class="wrapper">
-        <div class="alert alert-success">
-          <h2>altmetric</h2>
-          <h4 class="gigantic">18</h4>
-        </div>
-      </section>
-      <section id="build2" class="wrapper">
-        <div class="alert alert-failure">
-          <h2>octobutler</h2>
-          <h4 class="gigantic">12</h4>
-        </div>
-      </section>
-      <section id="build3" class="wrapper">
-        <div class="alert alert-failure">
-          <h2>tinker</h2>
-          <h4 class="gigantic">10</h4>
-        </div>
-      </section>
-    </article>
-
+    <div class="row twoup">
+      <div class="alert alert-success span4">
+        <h2>altmetric</h2>
+        <h4 class="gigantic">18</h4>
+      </div>
+      <div class="alert alert-failure span4">
+        <h2>octobutler</h2>
+        <h4 class="gigantic">12</h4>
+      </div>
+      <div class="alert alert-failure span4">
+        <h2>tinker</h2>
+        <h4 class="gigantic">10</h4>
+      </div>
+    </div>
+    <div class="row twoup">
+      <div class="alert alert-failure span4">
+        <h2>tinker</h2>
+        <h4 class="gigantic">10</h4>
+      </div>
+    </div>
   </body>
 </html>
